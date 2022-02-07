@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(smach_viewer)
 
-find_package(catkin REQUIRED COMPONENTS rostest)
+find_package(catkin REQUIRED COMPONENTS)
 
 catkin_python_setup()
 
@@ -13,9 +13,3 @@ catkin_package(
 # Install targets
 install(PROGRAMS scripts/smach_viewer.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
-# Add rostest
-if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
-  add_rostest(test/test_smach_viewer.test)
-endif()
