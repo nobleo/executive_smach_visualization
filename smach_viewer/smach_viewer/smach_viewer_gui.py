@@ -35,6 +35,7 @@ import rclpy
 from rclpy.time import Duration
 from rclpy.executors import SingleThreadedExecutor
 import rospkg
+import base64
 # import roslib
 
 from smach_msgs.msg import (
@@ -176,14 +177,14 @@ class ContainerNode:
         # Unpack the user data
         while rclpy.ok():
             try:
-                self._local_data._data = pickle.loads(msg.local_data)
+                self._local_data._data = pickle.loads(base64.b64decode(msg.local_data))
                 break
             except ImportError as ie:
                 # This will only happen once for each package
                 modulename = ie.args[0][16:]
                 packagename = modulename[0 : modulename.find(".")]
-                # roslib.load_manifest(packagename)
-                self._local_data._data = pickle.loads(msg.local_data)
+                self._local_data._data = pickle.loads(base64.b64decode(msg.local_data))
+
 
         # Store the info string
         self._info = msg.info
@@ -630,6 +631,8 @@ class SmachViewerFrame(wx.Frame):
         self._containers = {}
         self._selected_paths = []
 
+        self._executor.add_node(self._client)
+
         # Message subscribers
         self._structure_subs = {}
         self._status_subs = {}
@@ -687,7 +690,6 @@ class SmachViewerFrame(wx.Frame):
         state_path = self._selected_paths[0]
         parent_path = get_parent_path(state_path)
         state = get_label(state_path)
-
         server_name = self._containers[parent_path]._server_name
         self._client.set_initial_state(
             server_name, parent_path, [state], timeout=Duration(seconds=60)
@@ -1084,8 +1086,8 @@ class SmachViewerFrame(wx.Frame):
         self.widget.set_filter(filter)
 
 
-def main(args=None):
-    rclpy.init(args=args)
+def main():
+    rclpy.init()
 
     from argparse import ArgumentParser
 
