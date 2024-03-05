@@ -1084,8 +1084,8 @@ class SmachViewerFrame(wx.Frame):
         self.widget.set_filter(filter)
 
 
-def main():
-    rclpy.init()
+def main(args=None):
+    rclpy.init(args=args)
 
     from argparse import ArgumentParser
 
@@ -1097,7 +1097,7 @@ def main():
         help="Enable 'AutoFocus to subgraph' as default",
         dest="enable_auto_focus",
     )
-    args = p.parse_args()
+    args, _ = p.parse_known_args()
     app = wx.App(False)
 
     frame = SmachViewerFrame()
